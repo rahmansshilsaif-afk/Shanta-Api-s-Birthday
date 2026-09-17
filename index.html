@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Shanta Api</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@200;400;600&display=swap');
+
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #050505; color: white; 
+            font-family: 'Montserrat', sans-serif; overflow: hidden; 
+        }
+
+        /* 1. The Landing Screen */
+        #intro { 
+            position: fixed; inset: 0; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 100; 
+            background: #050505; text-align: center; 
+        }
+        
+        .start-btn {
+            padding: 18px 45px; font-size: 0.9rem; border: 1px solid rgba(255, 255, 255, 0.3); 
+            background: transparent; color: white; border-radius: 2px; cursor: pointer; 
+            transition: 0.8s; font-family: 'Montserrat', sans-serif;
+            letter-spacing: 8px; text-transform: uppercase;
+        }
+        .start-btn:hover { 
+            border-color: #ff3366; background: #ff3366; 
+            box-shadow: 0 0 40px rgba(255, 51, 102, 0.4); 
+        }
+
+        /* 2. The Stage Area */
+        #stage-container { 
+            position: fixed; inset: 0; display: none; align-items: center; 
+            justify-content: center; background: radial-gradient(circle at center, #1a0b0e 0%, #050505 100%); 
+        }
+        
+        .message {
+            position: absolute; width: 90%; text-align: center; opacity: 0; 
+            transform: scale(0.95); font-size: 1.8rem; font-weight: 200; 
+            line-height: 1.6; letter-spacing: 2px;
+        }
+
+        .highlight-name { 
+            font-family: 'Dancing Script', cursive; font-size: 5.5rem; 
+            color: #ff3366; display: block; margin-top: 20px; 
+            filter: drop-shadow(0 0 15px rgba(255,51,102,0.3)); 
+        }
+        
+        .love-text { 
+            font-weight: 400; color: #ffd700; letter-spacing: 3px; 
+            font-size: 1.1rem; margin-top: 20px; display: block; 
+            font-style: italic;
+        }
+
+        .sparkle { 
+            position: absolute; width: 2px; height: 2px; background: white; 
+            border-radius: 50%; pointer-events: none; opacity: 0.5; z-index: 1000;
+        }
+
+        @media (max-width: 600px) {
+            .message { font-size: 1.3rem; }
+            .highlight-name { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="music" loop>
+        <source src="aud.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="intro">
+        <p style="letter-spacing: 4px; font-weight: 200; margin-bottom: 25px; opacity: 0.7;">FOR THE BEST SISTER IN THE WORLD</p>
+        <button class="start-btn" onclick="begin()">Begin</button>
+    </div>
+
+    <div id="stage-container">
+        <div class="message" id="msg1">Warning: incoming birthday cheese ahead...</div>
+        <div class="message" id="msg2">But it's true — you're the <span style="font-weight: 600; color: #ff3366;">best sister</span> anyone could ask for.</div>
+        <div class="message" id="msg3">Miles away from home, working hard every single day,<br>sacrificing so much for your family — and doing it all with strength...</div>
+        <div class="message" id="msg4">...and I wouldn't trade you for anything.<br>Happy Birthday, <span class="highlight-name" style="display:inline; font-size: 4rem;">Shanta Api</span></div>
+        <div class="message" id="msg5">
+            <span style="display: block;">Every hard day you push through does not go unnoticed.</span>
+            <span class="love-text">We're so proud of you. Happy Birthday — keep shining. ❤️</span>
+        </div>
+    </div>
+
+    <script>
+        function begin() {
+            const music = document.getElementById('music');
+            music.play().catch(e => console.log("User interaction required"));
+
+            gsap.to("#intro", { opacity: 0, duration: 1.5, onComplete: () => {
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('stage-container').style.display = 'flex';
+                runSequence();
+            }});
+        }
+
+        function runSequence() {
+            const tl = gsap.timeline();
+            const stages = ["#msg1", "#msg2", "#msg3", "#msg4", "#msg5"];
+
+            stages.forEach((m, i) => {
+                if (i === stages.length - 1) {
+                    tl.to(m, { 
+                        opacity: 1, scale: 1, duration: 2.5, ease: "power2.out", delay: 0.5,
+                        onStart: () => {
+                            triggerGrandFinale();
+                        }
+                    });
+                } else {
+                    tl.to(m, { opacity: 1, scale: 1, duration: 2, ease: "power2.out" })
+                      .to(m, { opacity: 0, scale: 1.05, duration: 1.5, delay: 1.8, ease: "power2.in" });
+                }
+            });
+        }
+
+        function triggerGrandFinale() {
+            const end = Date.now() + (20 * 1000); // 20 seconds of celebration
+            setInterval(createHeart, 250);
+            (function frame() {
+                confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0, y: 0.8 }, colors: ['#ff3366', '#ffffff'] });
+                confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1, y: 0.8 }, colors: ['#ff3366', '#ffffff'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.innerHTML = '❤️';
+            h.style.cssText = `position:fixed; left:${Math.random()*100}vw; bottom:-5%; font-size:${Math.random()*15+20}px; z-index:10; color:#ff3366; opacity:0.8;`;
+            document.body.appendChild(h);
+            gsap.to(h, { y: -window.innerHeight-100, x: "+="+(Math.random()*200-100), rotation: Math.random()*360, duration: 4 + Math.random()*2, onComplete: () => h.remove() });
+        }
+
+        const handleMove = (e) => {
+            const x = e.clientX || (e.touches && e.touches[0].clientX);
+            const y = e.clientY || (e.touches && e.touches[0].clientY);
+            if (!x || !y) return;
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            s.style.left = x + 'px'; s.style.top = y + 'px';
+            document.body.appendChild(s);
+            gsap.to(s, { opacity: 0, scale: 3, duration: 1, onComplete: () => s.remove() });
+        };
+
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('touchstart', handleMove);
+    </script>
+</body>
+</html>
